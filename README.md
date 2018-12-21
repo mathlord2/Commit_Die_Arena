@@ -1,4 +1,3 @@
 # Commit_Die_Arena
 
-A Free-For-All game \n
-Practicing python skills
+A Free-For-All game for practicing python skills
