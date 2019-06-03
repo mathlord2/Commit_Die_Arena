@@ -1,5 +1,5 @@
-import random
-import time
+from random import *
+from time import *
 
 class Hero(object):
   def __init__(self, heroName, health, agility, strength):
@@ -28,931 +28,142 @@ class inventoryItems(Hero):
   def commitDie(self, heroName):
     heroName.health = 0
 
-Eric = Hero('Eric', 14000, 700, 1500)
-Trevor = Hero('Trevor', 15000, 500, 2000)
-Leo = Hero('Leo', 13000, 750, 1250)
-
 magicMushrooms = inventoryItems('Magic Mushrooms', 'Buff', 400)
 Meth = inventoryItems('Meth', 'Commit suicide', 0)
 NikeShoes = inventoryItems('Nike Shoes', 'Speed buff', 1000)
 
+print("Welcome to Eric's game called Commit Die Arena!")
 
-print("Welcome to Eric's game called Commit Die Arena! Here are your heroes and their stats:")
-print("Eric: 14000 health, 700 agility, 1500 strength")
-print("Trevor: 15000 health, 500 agility, 2000 strength")
-print("Leo: 13000 health, 750 agility, 1250 strength")
+userInput = int(input("Enter the number of players: "))
+heroes = []
+heroNames = []
 
-while True:
-  if Eric.health > 0 and Leo.health > 0 and Trevor.health <= 0:
-    a = [Eric.agility, Leo.agility]
-  elif Eric.health > 0 and Trevor.health > 0 and Leo.health <= 0:
-    a = [Eric.agility, Trevor.agility]
-  elif Trevor.health > 0 and Leo.health > 0 and Eric.health <= 0:
-    a = [Trevor.agility, Leo.agility]
-  elif Eric.health > 0 and Leo.health > 0 and Trevor.health > 0:
-    a = [Eric.agility, Leo.agility, Trevor.agility]
+for i in range(userInput):
+  heroName = input("Enter the name of hero #" + str(i+1) + ": ")
+  if heroName in heroNames:
+    while heroName in heroNames:
+      heroName = input("This hero already exists. Enter the name of hero #" + str(i+1) + ": ")
+  hero = Hero(heroName, 15000, 700, 1500)
+  heroes.append(hero)
+  heroNames.append(heroName)
 
-  if Eric.agility == max(a) and Eric.health > 0:
-    print("\nEric will make the first move.")
-    if Trevor.health > 0 or Leo.health > 0:
-      while True:
-        c = input("Who would you like to attack? ")
-        if c.lower() == 'trevor':
-          if Trevor.health > 0:
-            Eric.attack(Trevor)
-            if Trevor.health > 0:
-              print("Trevor now has " + str(Trevor.health) + " health left.")
-            else:
-              print("Trevor is now ded :(")
-          else:
-            print("Trevor is already dead. You will attack Leo instead.")
-            Eric.attack(Leo)
-            if Leo.health > 0:
-              print("Leo now has " + str(Leo.health) + " health left.")
-            else:
-              print("Leo is now ded :(")
-          break
-        elif c.lower() == 'leo':
-          if Leo.health > 0:
-            Eric.attack(Leo)
-            if Leo.health > 0:
-              print("Leo now has " + str(Leo.health) + " health left.")
-            else:
-              print("Leo is now ded :(")
-          else:
-            if Trevor.health > 0:
-              print("Leo is already dead. You will attack Trevor instead.")
-              Eric.attack(Trevor)
-              if Trevor.health > 0:
-                print("Trevor now has " + str(Trevor.health) + " health left.")
-              else:
-                print("Trevor is now ded :(")
-          break
-        else:
-            print ("That is not a valid input. Please try again.")
+while len(heroes) > 1:
+  heroSpeeds = []
+  heroesAlive = []
 
-    time.sleep(1)
-    print("\nEric will now spin the wheel to win a free inventory item! Here is a list of all the possible items and their functions:")
-    print("Magic Mushrooms: Strength and health and speed increase by 400")
-    print("Meth: Commit suicide")
-    print("Nike Shoes: Speed increase by 1000")
-    d = input("Press enter to spin the wheel:")
-    time.sleep(0.5)
-    if random.randint(1,4) == 1:
-      magicMushrooms.buff(Eric)
-      print("Eric was buffed by magic mushrooms!")
-    elif random.randint(1,4) == 2:
-      Meth.commitDie(Eric)
-      print("Eric has commited die due to meth :(")
-    elif random.randint(1,4) == 3:
-      NikeShoes.speedy(Eric)
-      print("Eric obtained Nike Shoes to increase his agility!")
+  for i in heroes:
+    if i.health > 0:
+      heroesAlive.append([i.agility, i])
+      heroSpeeds.append(i.agility)
+
+  heroOrder = []
+  heroNamesAlive = []
+
+  for i in range(len(heroSpeeds)):
+    for j in range(len(heroesAlive)):
+      if max(heroSpeeds) in heroesAlive[j]:
+        heroOrder.append(heroesAlive[j][1])
+        heroNamesAlive.append(heroesAlive[j][1].heroName)
+        heroSpeeds.remove(max(heroSpeeds))
+        heroesAlive.remove(heroesAlive[j])
+        break
+  
+  order = "\nOrder of attacking: "
+  for i in heroNamesAlive:
+    if i == heroNamesAlive[-1]:
+      order += i
     else:
-      print("Eric did not get an inventory item.")
+      order += i + ", "
 
-    print("Eric has now finished his turn.")
+  print(order)
+  sleep(1)
 
-    if Trevor.agility > Leo.agility and Trevor.health > 0:
-      print("\nNow it's Trevor's turn.")
-      if Eric.health > 0 or Leo.health > 0:
-        while True:
-          c = input("Who would you like to attack? ")
-          if c.lower() == 'eric':
-            if Eric.health > 0:
-              Trevor.attack(Eric)
-              if Eric.health > 0:
-                print("Eric now has " + str(Eric.health) + " health left.")
-              else:
-                print("Eric is now ded :(")
-            else:
-              print("Eric is already dead. You will attack Leo instead.")
-              Eric.attack(Leo)
-              if Leo.health > 0:
-                print("Leo now has " + str(Leo.health) + " health left.")
-              else:
-                print("Leo is now ded :(")
-            break
-          elif c.lower() == 'leo':
-            if Leo.health > 0:
-              Trevor.attack(Leo)
-              if Leo.health > 0:
-                print("Leo now has " + str(Leo.health) + " health left.")
-              else:
-                print("Leo is now ded :(")
-            else:
-              print("Leo is already dead. You will attack Eric instead.")
-              Trevor.attack(Eric)
-              if Eric.health > 0:
-                print("Eric now has " + str(Eric.health) + " health left.")
-              else:
-                print("Eric is now ded :(")
-            break
-          else:
-            print ("That is not a valid input. Please try again.")
-      time.sleep(1)
-      print("\nTrevor will now spin the wheel to win a free inventory item! Here is a list of all the possible items and their functions:")
-      print("Magic Mushrooms: Strength and health increase by 400")
+  for i in range(len(heroOrder)):
+    if heroOrder[i].health > 0 and len(heroes) > 1:
+      print("\nNow it's " + heroOrder[i].heroName + "'s turn.")
+      attack = input("Who would you like to attack? ")
+      if attack not in heroNames or heroOrder[heroNames.index(attack)].health <= 0:
+        while attack not in heroNames:
+          attack = input("That is not a valid input. Who would you like to attack? ")
+      
+      heroAttacked = heroOrder[heroNamesAlive.index(attack)]
+      heroOrder[i].attack(heroAttacked)
+      if heroAttacked.health > 0:
+        print(heroAttacked.heroName + " now has " + str(heroAttacked.health) + " health left.")
+
+      else:
+        print(heroAttacked.heroName + " is now ded :(")
+        heroes.remove(heroAttacked)
+        heroNames.remove(heroAttacked.heroName)
+      
+      sleep(1)
+
+      print("\n" + heroOrder[i].heroName + " will now spin the wheel to win a free inventory item! Here is a list of all the possible items and their functions:")
+      print("Magic Mushrooms: Strength, health, and speed increase by 400")
       print("Meth: Commit suicide")
       print("Nike Shoes: Speed increase by 1000")
-      d = input("Press enter to spin the wheel:")
-      time.sleep(0.5)
-      if random.randint(1,4) == 1:
-        magicMushrooms.buff(Trevor)
-        print("Trevor was buffed by magic mushrooms!")
-      elif random.randint(1,4) == 2:
-        Meth.commitDie(Trevor)
-        print("Trevor has commited die due to meth :(")
-      elif random.randint(1,4) == 3:
-        NikeShoes.speedy(Trevor)
-        print("Trevor obtained Nike Shoes to increase his agility!")
+      spin = input("Press enter to spin the wheel:")
+
+      sleep(0.5)
+      randomNumber = randint(1,4)
+      if randomNumber == 1:
+        magicMushrooms.buff(heroOrder[i])
+        print(heroOrder[i].heroName + " was buffed by magic mushrooms!")
+        
+      elif randomNumber == 2:
+        Meth.commitDie(heroOrder[i])
+        heroes.remove(heroOrder[i])
+        heroNames.remove(heroOrder[i].heroName)
+        print(heroOrder[i].heroName + " has commited die due to meth :(")
+        
+      elif randomNumber == 3:
+        NikeShoes.speedy(heroOrder[i])
+        print(heroOrder[i].heroName + " obtained Nike Shoes to increase their agility!")
+        
       else:
-        print("Trevor did not get an inventory item.")
+        print(heroOrder[i].heroName + " did not get an inventory item.")
 
-      print("Trevor has now finished his turn.")
+      print(heroOrder[i].heroName + " has now finished their turn.\n")
 
-      if Leo.health > 0:
-        print("\nNow it's Leo's turn.")
-        if Eric.health > 0 or Trevor.health > 0:
-          while True:
-            c = input("Who would you like to attack? ")
-            if c.lower() == 'eric':
-              if Eric.health > 0:
-                Leo.attack(Eric)
-                if Eric.health > 0:
-                  print("Eric now has " + str(Eric.health) + " health left.")
-                else:
-                  print("Eric is now ded :(")
-              else:
-                print("Eric is already dead. You will attack Trevor instead.")
-                Leo.attack(Trevor)
-                if Trevor.health > 0:
-                  print("Trevor now has " + str(Trevor.health) + " health left.")
-                else:
-                  print("Trevor is now ded :(")
-              break
-            elif c.lower() == 'trevor':
-              if Trevor.health > 0:
-                Leo.attack(Trevor)
-                if Leo.health > 0:
-                  print("Trevor now has " + str(Trevor.health) + " health left.")
-                else:
-                  print("Trevor is now ded :(")
-              else:
-                print("Trevor is already dead. You will attack Eric instead.")
-                Leo.attack(Eric)
-                if Eric.health > 0:
-                  print("Eric now has " + str(Eric.health) + " health left.")
-                else:
-                  print("Eric is now ded :(")
-              break
-            else:
-              print ("That is not a valid input. Please try again.")
-
-        time.sleep(1)
-        print("\nLeo will now spin the wheel to win a free inventory item! Here is a list of all the possible items and their functions:")
-        print("Magic Mushrooms: Strength and health increase by 400")
-        print("Meth: Commit suicide")
-        print("Nike Shoes: Speed increase by 1000")
-        d = input("Press enter to spin the wheel:")
-        time.sleep(0.5)
-        if random.randint(1,4) == 1:
-          magicMushrooms.buff(Leo)
-          print("Leo was buffed by magic mushrooms!")
-        elif random.randint(1,4) == 2:
-          Meth.commitDie(Leo)
-          print("Leo has commited die due to meth :(")
-        elif random.randint(1,4) == 3:
-          NikeShoes.speedy(Leo)
-          print("Leo obtained Nike Shoes to increase his agility!")
-        else:
-          print("Leo did not get an inventory item.")
-
-        print("Leo has now finished his turn.")
+    elif heroOrder[i].health <= 0:
+      print("Looks like " + heroOrder[i].heroName + " is ded :(")
+      sleep(1)
     
     else:
-      if Leo.health > 0:
-        print("\nNow it's Leo's turn.")
-        if Eric.health > 0 or Trevor.health > 0:
-          while True:
-            c = input("Who would you like to attack? ")
-            if c.lower() == 'eric':
-              if Eric.health > 0:
-                Leo.attack(Eric)
-                if Eric.health > 0:
-                  print("Eric now has " + str(Eric.health) + " health left.")
-                else:
-                  print("Eric is now ded :(")
-              else:
-                print("Eric is already dead. You will attack Trevor instead.")
-                Leo.attack(Trevor)
-                if Trevor.health > 0:
-                  print("Trevor now has " + str(Trevor.health) + " health left.")
-                else:
-                  print("Trevor is now ded :(")
-              break
-            elif c.lower() == 'trevor':
-              if Trevor.health > 0:
-                Leo.attack(Trevor)
-                if Leo.health > 0:
-                  print("Trevor now has " + str(Trevor.health) + " health left.")
-                else:
-                  print("Trevor is now ded :(")
-              else:
-                print("Trevor is already dead. You will attack Eric instead.")
-                Leo.attack(Eric)
-                if Eric.health > 0:
-                  print("Eric now has " + str(Eric.health) + " health left.")
-                else:
-                  print("Eric is now ded :(")
-              break
-            else:
-              print ("That is not a valid input. Please try again.")
-
-        time.sleep(1)
-        print("\nLeo will now spin the wheel to win a free inventory item! Here is a list of all the possible items and their functions:")
-        print("Magic Mushrooms: Strength and health increase by 400")
-        print("Meth: Commit suicide")
-        print("Nike Shoes: Speed increase by 1000")
-        d = input("Press enter to spin the wheel:")
-        time.sleep(0.5)
-        if random.randint(1,4) == 1:
-          magicMushrooms.buff(Leo)
-          print("Leo was buffed by magic mushrooms!")
-        elif random.randint(1,4) == 2:
-          Meth.commitDie(Leo)
-          print("Leo has commited die due to meth :(")
-        elif random.randint(1,4) == 3:
-          NikeShoes.speedy(Leo)
-          print("Leo obtained Nike Shoes to increase his agility!")
-        else:
-          print("Leo did not get an inventory item.")
-
-        print("Leo has now finished his turn.")
-
-        if Trevor.health > 0:
-          print("\nNow it's Trevor's turn.")
-          if Eric.health > 0 or Leo.health > 0:
-            while True:
-              c = input("Who would you like to attack? ")
-              if c.lower() == 'eric':
-                if Eric.health > 0:
-                  Trevor.attack(Eric)
-                  if Eric.health > 0:
-                    print("Eric now has " + str(Eric.health) + " health left.")
-                  else:
-                    print("Eric is now ded :(")
-                else:
-                  print("Eric is already dead. You will attack Leo instead.")
-                  Trevor.attack(Leo)
-                  if Leo.health > 0:
-                    print("Leo now has " + str(Leo.health) + " health left.")
-                  else:
-                    print("Leo is now ded :(")
-                break
-              elif c.lower() == 'leo':
-                if Leo.health > 0:
-                  Trevor.attack(Leo)
-                  if Leo.health > 0:
-                    print("Leo now has " + str(Leo.health) + " health left.")
-                  else:
-                    print("Leo is now ded :(")
-                else:
-                  print("Leo is already dead. You will attack Eric instead.")
-                  Trevor.attack(Eric)
-                  if Eric.health > 0:
-                    print("Eric now has " + str(Eric.health) + " health left.")
-                  else:
-                    print("Eric is now ded :(")
-                break
-              else:
-                print ("That is not a valid input. Please try again.")
-
-          time.sleep(1)
-          print("\nTrevor will now spin the wheel to win a free inventory item! Here is a list of all the possible items and their functions:")
-          print("Magic Mushrooms: Strength and health increase by 400")
-          print("Meth: Commit suicide")
-          print("Nike Shoes: Speed increase by 1000")
-          d = input("Press enter to spin the wheel:")
-          time.sleep(0.5)
-          if random.randint(1,4) == 1:
-            magicMushrooms.buff(Trevor)
-            print("Trevor was buffed by magic mushrooms!")
-          elif random.randint(1,4) == 2:
-            Meth.commitDie(Trevor)
-            print("Trevor has commited die due to meth :(")
-          elif random.randint(1,4) == 3:
-            NikeShoes.speedy(Trevor)
-            print("Trevor obtained Nike Shoes to increase his agility!")
-          else:
-            print("Trevor did not get an inventory item.")
-
-          print("Trevor has now finished his turn.")
-
-  elif Trevor.agility == max(a) and Trevor.health > 0:
-    print("\nTrevor will make the first move.")
-    if Eric.health > 0 or Leo.health > 0:
-      while True:
-        c = input("Who would you like to attack? ")
-        if c.lower() == 'eric':
-          if Eric.health > 0:
-            Trevor.attack(Eric)
-            if Eric.health > 0:
-              print("Eric now has " + str(Eric.health) + " health left.")
-            else:
-              print("Eric is now ded :(")
-          else:
-            print("Eric is already dead. You will attack Leo instead.")
-            Trevor.attack(Leo)
-            if Leo.health > 0:
-              print("Leo now has " + str(Leo.health) + " health left.")
-            else:
-              print("Leo is now ded :(")
-          break
-        elif c.lower() == 'leo':
-          if Leo.health > 0:
-            Trevor.attack(Leo)
-            if Leo.health > 0:
-              print("Leo now has " + str(Leo.health) + " health left.")
-            else:
-              print("Leo is now ded :(")
-          else:
-            print("Leo is already dead. You will attack Eric instead.")
-            Trevor.attack(Eric)
-            if Eric.health > 0:
-              print("Eric now has " + str(Eric.health) + " health left.")
-            else:
-              print("Eric is now ded :(")
-          break
-        else:
-          print ("That is not a valid input. Please try again.")
-    time.sleep(1)
-    print("\nTrevor will now spin the wheel to win a free inventory item! Here is a list of all the possible items and their functions:")
-    print("Magic Mushrooms: Strength and health increase by 400")
-    print("Meth: Commit suicide")
-    print("Nike Shoes: Speed increase by 1000")
-    d = input("Press enter to spin the wheel:")
-    time.sleep(0.5)
-    if random.randint(1,4) == 1:
-      magicMushrooms.buff(Trevor)
-      print("Trevor was buffed by magic mushrooms!")
-    elif random.randint(1,4) == 2:
-      Meth.commitDie(Trevor)
-      print("Trevor has commited die due to meth :(")
-    elif random.randint(1,4) == 3:
-      NikeShoes.speedy(Trevor)
-      print("Trevor obtained Nike Shoes to increase his agility!")
-    else:
-      print("Trevor did not get an inventory item.")
-
-    print("Trevor has now finished his turn.")
-
-    if Eric.agility > Leo.agility and Eric.health > 0:
-      print("\nNow it's Eric's turn.")
-      if Trevor.health > 0 or Leo.health > 0:
-        while True:
-          c = input("Who would you like to attack? ")
-          if c.lower() == 'trevor':
-            if Trevor.health > 0:
-              Eric.attack(Trevor)
-              if Trevor.health > 0:
-                print("Trevor now has " + str(Trevor.health) + " health left.")
-              else:
-                print("Trevor is now ded :(")
-            else:
-              print("Trevor is already dead. You will attack Leo instead.")
-              Eric.attack(Leo)
-              if Leo.health > 0:
-                print("Leo now has " + str(Leo.health) + " health left.")
-              else:
-                print("Leo is now ded :(")
-            break
-          elif c.lower() == 'leo':
-            if Leo.health > 0:
-              Eric.attack(Leo)
-              if Leo.health > 0:
-                print("Leo now has " + str(Leo.health) + " health left.")
-              else:
-                print("Leo is now ded :(")
-            else:
-              print("Leo is already dead. You will attack Trevor instead.")
-              Eric.attack(Trevor)
-              if Trevor.health > 0:
-                print("Trevor now has " + str(Trevor.health) + " health left.")
-              else:
-                print("Trevor is now ded :(")
-            break
-          else:
-            print ("That is not a valid input. Please try again.")
-    
-      time.sleep(1)
-      print("\nEric will now spin the wheel to win a free inventory item! Here is a list of all the possible items and their functions:")
-      print("Magic Mushrooms: Strength and health increase by 400")
+      print("\nNow it's " + heroOrder[i].heroName + "'s turn.")
+      print("\n" + heroOrder[i].heroName + " will now spin the wheel to win a free inventory item! Here is a list of all the possible items and their functions:")
+      print("Magic Mushrooms: Strength, health, and speed increase by 400")
       print("Meth: Commit suicide")
       print("Nike Shoes: Speed increase by 1000")
-      d = input("Press enter to spin the wheel:")
-      time.sleep(0.5)
-      if random.randint(1,4) == 1:
-        magicMushrooms.buff(Eric)
-        print("Eric was buffed by magic mushrooms!")
-      elif random.randint(1,4) == 2:
-        Meth.commitDie(Eric)
-        print("Eric has commited die due to meth :(")
-      elif random.randint(1,4) == 3:
-        NikeShoes.speedy(Eric)
-        print("Eric obtained Nike Shoes to increase his agility!")
+      spin = input("Press enter to spin the wheel:")
+
+      sleep(0.5)
+      randomNumber = randint(1,4)
+      if randomNumber == 1:
+        magicMushrooms.buff(heroOrder[i])
+        print(heroOrder[i].heroName + " was buffed by magic mushrooms!")
+        
+      elif randomNumber == 2:
+        Meth.commitDie(heroOrder[i])
+        heroes.remove(heroOrder[i])
+        heroNames.remove(heroOrder[i].heroName)
+        print(heroOrder[i].heroName + " has commited die due to meth :(")
+        
+      elif randomNumber == 3:
+        NikeShoes.speedy(heroOrder[i])
+        print(heroOrder[i].heroName + " obtained Nike Shoes to increase their agility!")
+        
       else:
-        print("Eric did not get an inventory item.")
+        print(heroOrder[i].heroName + " did not get an inventory item.")
 
-      print("Eric has now finished his turn.")
+      print(heroOrder[i].heroName + " has now finished their turn.\n")
+  
+  if len(heroes) == 1:
+    print("The game has ended. " + heroes[0].heroName + " has won Commit Die Arena!")
 
-      if Leo.health > 0:
-        print("\nNow it's Leo's turn.")
-        if Eric.health > 0 or Trevor.health > 0:
-          while True:
-            c = input("Who would you like to attack? ")
-            if c.lower() == 'eric':
-              if Eric.health > 0:
-                Leo.attack(Eric)
-                if Eric.health > 0:
-                  print("Eric now has " + str(Eric.health) + " health left.")
-                else:
-                  print("Eric is now ded :(")
-              else:
-                print("Eric is already dead. You will attack Trevor instead.")
-                Leo.attack(Trevor)
-                if Trevor.health > 0:
-                  print("Trevor now has " + str(Trevor.health) + " health left.")
-                else:
-                  print("Trevor is now ded :(")
-              break
-            elif c.lower() == 'trevor':
-              if Trevor.health > 0:
-                Leo.attack(Trevor)
-                if Leo.health > 0:
-                  print("Trevor now has " + str(Trevor.health) + " health left.")
-                else:
-                  print("Trevor is now ded :(")
-              else:
-                print("Trevor is already dead. You will attack Eric instead.")
-                Leo.attack(Eric)
-                if Eric.health > 0:
-                  print("Eric now has " + str(Eric.health) + " health left.")
-                else:
-                  print("Eric is now ded :(")
-              break
-            else:
-              print ("That is not a valid input. Please try again.")
-
-        time.sleep(1)        
-        print("\nLeo will now spin the wheel to win a free inventory item! Here is a list of all the possible items and their functions:")
-        print("Magic Mushrooms: Strength and health increase by 400")
-        print("Meth: Commit suicide")
-        print("Nike Shoes: Speed increase by 1000")
-        d = input("Press enter to spin the wheel:")
-        time.sleep(0.5)
-        if random.randint(1,4) == 1:
-          magicMushrooms.buff(Leo)
-          print("Leo was buffed by magic mushrooms!")
-        elif random.randint(1,4) == 2:
-          Meth.commitDie(Leo)
-          print("Leo has commited die due to meth :(")
-        elif random.randint(1,4) == 3:
-          NikeShoes.speedy(Leo)
-          print("Leo obtained Nike Shoes to increase his agility!")
-        else:
-          print("Leo did not get an inventory item.")
-
-        print("Leo has now finished his turn.")
-      
-    else:
-      if Leo.health > 0:
-        print("\nNow it's Leo's turn.")
-        if Eric.health > 0 or Trevor.health > 0:
-          while True:
-            c = input("Who would you like to attack? ")
-            if c.lower() == 'eric':
-              if Eric.health > 0:
-                Leo.attack(Eric)
-                if Eric.health > 0:
-                  print("Eric now has " + str(Eric.health) + " health left.")
-                else:
-                  print("Eric is now ded :(")
-              else:
-                print("Eric is already dead. You will attack Trevor instead.")
-                Leo.attack(Trevor)
-                if Trevor.health > 0:
-                  print("Trevor now has " + str(Trevor.health) + " health left.")
-                else:
-                  print("Trevor is now ded :(")
-              break
-            elif c.lower() == 'trevor':
-              if Trevor.health > 0:
-                Leo.attack(Trevor)
-                if Leo.health > 0:
-                  print("Trevor now has " + str(Trevor.health) + " health left.")
-                else:
-                  print("Trevor is now ded :(")
-              else:
-                print("Trevor is already dead. You will attack Eric instead.")
-                Leo.attack(Eric)
-                if Eric.health > 0:
-                  print("Eric now has " + str(Eric.health) + " health left.")
-                else:
-                  print("Eric is now ded :(")
-              break
-            else:
-              print ("That is not a valid input. Please try again.")
-      
-        time.sleep(1)
-        print("\nLeo will now spin the wheel to win a free inventory item! Here is a list of all the possible items and their functions:")
-        print("Magic Mushrooms: Strength and health increase by 400")
-        print("Meth: Commit suicide")
-        print("Nike Shoes: Speed increase by 1000")
-        d = input("Press enter to spin the wheel:")
-        time.sleep(0.5)
-        if random.randint(1,4) == 1:
-          magicMushrooms.buff(Leo)
-          print("Leo was buffed by magic mushrooms!")
-        elif random.randint(1,4) == 2:
-          Meth.commitDie(Leo)
-          print("Leo has commited die due to meth :(")
-        elif random.randint(1,4) == 3:
-          NikeShoes.speedy(Leo)
-          print("Leo obtained Nike Shoes to increase his agility!")
-        else:
-          print("Leo did not get an inventory item.")
-
-        print("Leo has now finished his turn.")
-
-      if Eric.health > 0:
-        print("\nNow it's Eric's turn.")
-        if Trevor.health > 0 or Leo.health > 0:
-          while True:
-            c = input("Who would you like to attack? ")
-            if c.lower() == 'trevor':
-              if Trevor.health > 0:
-                Eric.attack(Trevor)
-                if Trevor.health > 0:
-                  print("Trevor now has " + str(Trevor.health) + " health left.")
-                else:
-                  print("Trevor is now ded :(")
-              else:
-                print("Trevor is already dead. You will attack Leo instead.")
-                Eric.attack(Leo)
-                if Leo.health > 0:
-                  print("Leo now has " + str(Leo.health) + " health left.")
-                else:
-                  print("Leo is now ded :(")
-              break
-            elif c.lower() == 'leo':
-              if Leo.health > 0:
-                Eric.attack(Leo)
-                if Leo.health > 0:
-                  print("Leo now has " + str(Leo.health) + " health left.")
-                else:
-                  print("Leo is now ded :(")
-              else:
-                print("Leo is already dead. You will attack Trevor instead.")
-                Eric.attack(Trevor)
-                if Trevor.health > 0:
-                  print("Trevor now has " + str(Trevor.health) + " health left.")
-                else:
-                  print("Trevor is now ded :(")
-              break
-            else:
-              print ("That is not a valid input. Please try again.")
-
-        time.sleep(1)
-        print("\nEric will now spin the wheel to win a free inventory item! Here is a list of all the possible items and their functions:")
-        print("Magic Mushrooms: Strength and health increase by 400")
-        print("Meth: Commit suicide")
-        print("Nike Shoes: Speed increase by 1000")
-        d = input("Press enter to spin the wheel:")
-        time.sleep(0.5)
-        if random.randint(1,4) == 1:
-          magicMushrooms.buff(Eric)
-          print("Eric was buffed by magic mushrooms!")
-        elif random.randint(1,4) == 2:
-          Meth.commitDie(Eric)
-          print("Eric has commited die due to meth :(")
-        elif random.randint(1,4) == 3:
-          NikeShoes.speedy(Eric)
-          print("Eric obtained Nike Shoes to increase his agility!")
-        else:
-          print("Eric did not get an inventory item.")
-
-        print("Eric has now finished his turn.")
-
-  elif Leo.agility == max(a) and Leo.health > 0:
-    print("\nLeo will make the first move.")
-    if Eric.health > 0 or Trevor.health > 0:
-      while True:
-        c = input("Who would you like to attack? ")
-        if c.lower() == 'eric':
-          if Eric.health > 0:
-            Leo.attack(Eric)
-            if Eric.health > 0:
-              print("Eric now has " + str(Eric.health) + " health left.")
-            else:
-              print("Eric is now ded :(")
-          else:
-            print("Eric is already dead. You will attack Trevor instead.")
-            Leo.attack(Trevor)
-            if Trevor.health > 0:
-              print("Trevor now has " + str(Trevor.health) + " health left.")
-            else:
-              print("Trevor is now ded :(")
-          break
-        elif c.lower() == 'trevor':
-          if Trevor.health > 0:
-            Leo.attack(Trevor)
-            if Leo.health > 0:
-              print("Trevor now has " + str(Trevor.health) + " health left.")
-            else:
-              print("Trevor is now ded :(")
-          else:
-            print("Trevor is already dead. You will attack Eric instead.")
-            Leo.attack(Eric)
-            if Eric.health > 0:
-              print("Eric now has " + str(Eric.health) + " health left.")
-            else:
-              print("Eric is now ded :(")
-          break
-        else:
-          print ("That is not a valid input. Please try again.")
+  elif len(heroes) == 0:
+    print("Everyone has miraculously commited die :)")
     
-    time.sleep(1)
-    print("\nLeo will now spin the wheel to win a free inventory item! Here is a list of all the possible items and their functions:")
-    print("Magic Mushrooms: Strength and health increase by 400")
-    print("Meth: Commit suicide")
-    print("Nike Shoes: Speed increase by 1000")
-    d = input("Press enter to spin the wheel:")
-    time.sleep(0.5)
-    if random.randint(1,4) == 1:
-      magicMushrooms.buff(Leo)
-      print("Leo was buffed by magic mushrooms!")
-    elif random.randint(1,4) == 2:
-      Meth.commitDie(Leo)
-      print("Leo has commited die due to meth :(")
-    elif random.randint(1,4) == 3:
-      NikeShoes.speedy(Leo)
-      print("Leo obtained Nike Shoes to increase his agility!")
-    else:
-      print("Leo did not get an inventory item.")
-
-    print("Leo has now finished his turn.")
-
-    if Eric.agility > Trevor.agility and Eric.health > 0:
-      print("\nNow it's Eric's turn.")
-      if Trevor.health > 0 or Leo.health > 0:
-        while True:
-          c = input("Who would you like to attack? ")
-          if c.lower() == 'trevor':
-            if Trevor.health > 0:
-              Eric.attack(Trevor)
-              if Trevor.health > 0:
-                print("Trevor now has " + str(Trevor.health) + " health left.")
-              else:
-                print("Trevor is now ded :(")
-            else:
-              print("Trevor is already dead. You will attack Leo instead.")
-              Eric.attack(Leo)
-              if Leo.health > 0:
-                print("Leo now has " + str(Leo.health) + " health left.")
-              else:
-                print("Leo is now ded :(")
-            break
-          elif c.lower() == 'leo':
-            if Leo.health > 0:
-              Eric.attack(Leo)
-              if Leo.health > 0:
-                print("Leo now has " + str(Leo.health) + " health left.")
-              else:
-                print("Leo is now ded :(")
-            else:
-              print("Leo is already dead. You will attack Trevor instead.")
-              Eric.attack(Trevor)
-              if Trevor.health > 0:
-                print("Trevor now has " + str(Trevor.health) + " health left.")
-              else:
-                print("Trevor is now ded :(")
-            break
-          else:
-            print ("That is not a valid input. Please try again.")
-      
-      time.sleep(1)
-      print("\nEric will now spin the wheel to win a free inventory item! Here is a list of all the possible items and their functions:")
-      print("Magic Mushrooms: Strength and health increase by 400")
-      print("Meth: Commit suicide")
-      print("Nike Shoes: Speed increase by 1000")
-      d = input("Press enter to spin the wheel:")
-      time.sleep(0.5)
-      if random.randint(1,4) == 1:
-        magicMushrooms.buff(Eric)
-        print("Eric was buffed by magic mushrooms!")
-      elif random.randint(1,4) == 2:
-        Meth.commitDie(Eric)
-        print("Eric has commited die due to meth :(")
-      elif random.randint(1,4) == 3:
-        NikeShoes.speedy(Eric)
-        print("Eric obtained Nike Shoes to increase his agility!")
-      else:
-        print("Eric did not get an inventory item.")
-
-      print("Eric has now finished his turn.")
-
-      if Trevor.health > 0:
-        print("\nNow it's Trevor's turn.")
-        if Eric.health > 0 or Leo.health > 0:
-          while True:
-            c = input("Who would you like to attack? ")
-            if c.lower() == 'eric':
-              if Eric.health > 0:
-                Trevor.attack(Eric)
-                if Eric.health > 0:
-                  print("Eric now has " + str(Eric.health) + " health left.")
-                else:
-                  print("Eric is now ded :(")
-              else:
-                print("Eric is already dead. You will attack Leo instead.")
-                Trevor.attack(Leo)
-                if Leo.health > 0:
-                  print("Leo now has " + str(Leo.health) + " health left.")
-                else:
-                  print("Leo is now ded :(")
-              break
-            elif c.lower() == 'leo':
-              if Leo.health > 0:
-                Trevor.attack(Leo)
-                if Leo.health > 0:
-                  print("Leo now has " + str(Leo.health) + " health left.")
-                else:
-                  print("Leo is now ded :(")
-              else:
-                print("Leo is already dead. You will attack Eric instead.")
-                Trevor.attack(Eric)
-                if Eric.health > 0:
-                  print("Eric now has " + str(Eric.health) + " health left.")
-                else:
-                  print("Eric is now ded :(")
-              break
-            else:
-              print ("That is not a valid input. Please try again.")
-
-        time.sleep(1)
-        print("\nTrevor will now spin the wheel to win a free inventory item! Here is a list of all the possible items and their functions:")
-        print("Magic Mushrooms: Strength and health increase by 400")
-        print("Meth: Commit suicide")
-        print("Nike Shoes: Speed increase by 1000")
-        d = input("Press enter to spin the wheel:")
-        time.sleep(0.5)
-        if random.randint(1,4) == 1:
-          magicMushrooms.buff(Trevor)
-          print("Trevor was buffed by magic mushrooms!")
-        elif random.randint(1,4) == 2:
-          Meth.commitDie(Trevor)
-          print("Trevor has commited die due to meth :(")
-        elif random.randint(1,4) == 3:
-          NikeShoes.speedy(Trevor)
-          print("Trevor obtained Nike Shoes to increase his agility!")
-        else:
-          print("Trevor did not get an inventory item.")
-
-        print("Trevor has now finished his turn.")
-
-    else:
-      if Trevor.health > 0:
-        print("\nNow it's Trevor's turn.")
-        if Eric.health > 0 or Leo.health > 0:
-          while True:
-            c = input("Who would you like to attack? ")
-            if c.lower() == 'eric':
-              if Eric.health > 0:
-                Trevor.attack(Eric)
-                if Eric.health > 0:
-                  print("Eric now has " + str(Eric.health) + " health left.")
-                else:
-                  print("Eric is now ded :(")
-              else:
-                print("Eric is already dead. You will attack Leo instead.")
-                Trevor.attack(Leo)
-                if Leo.health > 0:
-                  print("Leo now has " + str(Leo.health) + " health left.")
-                else:
-                  print("Leo is now ded :(")
-              break
-            elif c.lower() == 'leo':
-              if Leo.health > 0:
-                Trevor.attack(Leo)
-                if Leo.health > 0:
-                  print("Leo now has " + str(Leo.health) + " health left.")
-                else:
-                  print("Leo is now ded :(")
-              else:
-                print("Leo is already dead. You will attack Eric instead.")
-                Trevor.attack(Eric)
-                if Eric.health > 0:
-                  print("Eric now has " + str(Eric.health) + " health left.")
-                else:
-                  print("Eric is now ded :(")
-              break
-            else:
-              print ("That is not a valid input. Please try again.")
-    
-        time.sleep(1)
-        print("\nTrevor will now spin the wheel to win a free inventory item! Here is a list of all the possible items and their functions:")
-        print("Magic Mushrooms: Strength and health increase by 400")
-        print("Meth: Commit suicide")
-        print("Nike Shoes: Speed increase by 1000")
-        d = input("Press enter to spin the wheel:")
-        time.sleep(0.5)
-        if random.randint(1,4) == 1:
-          magicMushrooms.buff(Trevor)
-          print("Trevor was buffed by magic mushrooms!")
-        elif random.randint(1,4) == 2:
-          Meth.commitDie(Trevor)
-          print("Trevor has commited die due to meth :(")
-        elif random.randint(1,4) == 3:
-          NikeShoes.speedy(Trevor)
-          print("Trevor obtained Nike Shoes to increase his agility!")
-        else:
-          print("Trevor did not get an inventory item.")
-
-        print("Trevor has now finished his turn.")
-
-        if Eric.health > 0:
-          print("\nNow it's Eric's turn.")
-          if Trevor.health > 0 or Leo.health > 0:
-            while True:
-              c = input("Who would you like to attack? ")
-              if c.lower() == 'trevor':
-                if Trevor.health > 0:
-                  Eric.attack(Trevor)
-                  if Trevor.health > 0:
-                    print("Trevor now has " + str(Trevor.health) + " health left.")
-                  else:
-                    print("Trevor is now ded :(")
-                else:
-                  print("Trevor is already dead. You will attack Leo instead.")
-                  Eric.attack(Leo)
-                  if Leo.health > 0:
-                    print("Leo now has " + str(Leo.health) + " health left.")
-                  else:
-                    print("Leo is now ded :(")
-                break
-              elif c.lower() == 'leo':
-                if Leo.health > 0:
-                  Eric.attack(Leo)
-                  if Leo.health > 0:
-                    print("Leo now has " + str(Leo.health) + " health left.")
-                  else:
-                    print("Leo is now ded :(")
-                else:
-                  print("Leo is already dead. You will attack Trevor instead.")
-                  Eric.attack(Trevor)
-                  if Trevor.health > 0:
-                    print("Trevor now has " + str(Trevor.health) + " health left.")
-                  else:
-                    print("Trevor is now ded :(")
-                break
-              else:
-                print ("That is not a valid input. Please try again.")
-          
-          time.sleep(1)
-          print("\nEric will now spin the wheel to win a free inventory item! Here is a list of all the possible items and their functions:")
-          print("Magic Mushrooms: Strength and health increase by 400")
-          print("Meth: Commit suicide")
-          print("Nike Shoes: Speed increase by 1000")
-          d = input("Press enter to spin the wheel:")
-          time.sleep(0.5)
-          if random.randint(1,4) == 1:
-            magicMushrooms.buff(Eric)
-            print("Eric was buffed by magic mushrooms!")
-          elif random.randint(1,4) == 2:
-            Meth.commitDie(Eric)
-            print("Eric has commited die due to meth :(")
-          elif random.randint(1,4) == 3:
-            NikeShoes.speedy(Eric)
-            print("Eric obtained Nike Shoes to increase his agility!")
-          else:
-            print("Eric did not get an inventory item.")
-
-          print("Eric has now finished his turn.")
-
-
-  if Eric.health > 0 and Trevor.health <= 0 and Leo.health <= 0:
-    print("\nThe game has ended. Eric is the winner of Commit Die Arena!")
-    break
-  
-  elif Trevor.health > 0 and Eric.health <= 0 and Leo.health <= 0:
-    print("\nThe game has ended. Trevor is the winner of Commit Die Arena!")
-    break
-
-  elif Leo.health > 0 and Eric.health <= 0 and Trevor.health <= 0:
-    print("\nThe game has ended. Leo is the winner of Commit Die Arena!")
-    break
-  
-  elif Eric.health <= 0 and Trevor.health <= 0 and Leo.health <= 0:
-    print("Everyone has miraculously commited die!")
-  
-  print ("The next round will begin :)")
+  else:
+    print("The round has ended. Let the battles commence again!\n")
+    sleep(1)
